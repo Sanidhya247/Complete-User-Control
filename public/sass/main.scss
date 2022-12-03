@@ -1,0 +1,277 @@
+body {
+  background: linear-gradient(to right, #325861, #88bdbc);
+  // background: #88BDBC;
+  
+  overflow: hidden;
+  overflow-y: scroll;
+}
+::-webkit-scrollbar {
+  display: none;
+}
+@mixin input {
+  width: 280px;
+  background: rgb(255,255,255,0.35);
+  border: 1px;
+  padding: 7px 10px;
+  border-radius: 7px;
+}
+@mixin col-all-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+::placeholder {
+  color: #d7d7d7;
+}
+.nav-item a{
+  color: white;
+ 
+}
+.nav {
+  text-align: center;
+  background: linear-gradient(to right, #325861, #88bdbc);
+  position: fixed;
+  width: 100%;
+  z-index: 1;
+  top: 0;
+
+  .nav-left {
+    text-align: center;
+
+    margin-top: 5px;
+    color: whitesmoke;
+  }
+  h1 {
+    font-family: "Pacifico";
+  }
+  .nav-right {
+    font-family: "Maven Pro";
+    width: 15%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .log-btn {
+      border: 1px solid #82b5b5;
+      background: black;
+      color: #d4fff8;
+      padding: 5px 14px;
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: bold;
+      box-shadow: 5px 6px 84px 0px;
+    }
+    .log-btn:hover {
+      background-color: #88bdbc;
+      color: black;
+    }
+  }
+}
+.login-btn {
+  background: black;
+  color: #d4fff8;
+  padding: 5px 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: bold;
+  box-shadow: 5px 6px 84px 0px;
+}
+.login-btn:hover {
+  background-color: #88bdbc;
+  color: black;
+}
+
+.login-section {
+  margin-top: 2%;
+}
+.login-form {
+  font-family: "Comfortaa";
+  border: 5px solid black;
+  top: 20%;
+  left: 15%;
+  right: 15%;
+  border-radius: 9% 0%;
+  padding: 40px;
+
+  .login-form-header h3 {
+    font-weight: bold;
+    font-size: 40px;
+  }
+  .login-form-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .btns {
+      display: flex;
+      flex-direction: row;
+    }
+    div {
+      display: flex;
+      flex-direction: column;
+      margin: 7px 0px;
+
+      label {
+        font-weight: bold;
+        font-size: 20px;
+      }
+      input {
+        @include input();
+      }
+    }
+  }
+}
+.line {
+  height: 1px;
+  background: black;
+  width: auto;
+  margin: 15px 0px;
+}
+
+.modal-body {
+  .mb-2 {
+    margin: 20px 0px;
+    padding: 5px;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+  .modal-body-heading {
+    font: bold;
+  }
+  .mb-2:hover {
+    background-color: #00000036;
+  }
+}
+
+.signup-form {
+  font-family: "Comfortaa";
+  border: 5px solid black;
+  top: 20%;
+  left: 15%;
+  right: 15%;
+  border-radius: 9% 0%;
+  padding: 25px;
+
+  .signup-form-header h3 {
+    font-weight: bold;
+    font-size: 40px;
+  }
+  .signup-form-main {
+    @include col-all-center();
+
+    .btns {
+      display: flex;
+      flex-direction: row;
+    }
+    div {
+      display: flex;
+      flex-direction: column;
+      margin: 7px 0px;
+
+      select {
+        @include input();
+      }
+      label {
+        font-weight: bold;
+        font-size: 20px;
+      }
+      input {
+        @include input();
+      }
+      textarea {
+        @include input();
+      }
+    }
+  }
+}
+
+////// Home //////////
+.section {
+  margin-top: 20px;
+}
+.home-header {
+  margin: 20px 5px;
+}
+.totals {
+  background-color: rgba(128, 128, 128, 0.112);
+  border-radius: 10px;
+  justify-content: space-around;
+  .total-admins {
+    @include col-all-center();
+  }
+  .total-managers {
+    @include col-all-center();
+  }
+  .total-users {
+    @include col-all-center();
+  }
+  .circle-total {
+    border: 2px solid;
+    padding: 0px 40px;
+    margin: 12px;
+    line-height: 100px;
+    width: 100px;
+    height: 100px;
+    border-radius: 79px;
+  }
+}
+.lists {
+  font-family: "Quicksand";
+  margin: 15px 5px;
+
+  .list-1 {
+    border: 1px solid;
+    border-radius: 10px;
+    width: 70%;
+    padding: 20px;
+    background: linear-gradient(to left, #325861, #88bdbc);
+
+    .card {
+      background-color: transparent;
+    }
+  }
+  .list-2 {
+    padding: 20px;
+    width: 30%;
+    border: 1px solid;
+    border-radius: 10px;
+    background: linear-gradient(to right, #325861, #88bdbc);
+
+    li {
+      background-color: transparent;
+    }
+  }
+}
+.breadcrumb {
+  margin-top: 61px;
+  background: black;
+}
+.requests-section-header{
+  font-family: 'Play';
+}
+.table-btn{
+ 
+  background-color: black;
+  padding: 0px 17px;
+  border-radius: 25px;
+
+  i{
+    color: white;
+  }
+}
+
+.invalid{
+  border: 1px solid red !important;
+  box-shadow: 0px 0px 7px 0px;
+  color: red;
+
+}
+.alert-div{
+    width: 100%;
+    margin-top: 100px;
+    height: 60px;
+}

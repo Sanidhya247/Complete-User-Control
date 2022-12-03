@@ -1,0 +1,294 @@
+body {
+  background: linear-gradient(to right, #325861, #88bdbc);
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+::-moz-placeholder {
+  color: #d7d7d7;
+}
+
+:-ms-input-placeholder {
+  color: #d7d7d7;
+}
+
+::placeholder {
+  color: #d7d7d7;
+}
+
+.nav-item a {
+  color: white;
+}
+
+.nav {
+  text-align: center;
+  background: linear-gradient(to right, #325861, #88bdbc);
+  position: fixed;
+  width: 100%;
+  z-index: 1;
+  top: 0;
+}
+.nav .nav-left {
+  text-align: center;
+  margin-top: 5px;
+  color: whitesmoke;
+}
+.nav h1 {
+  font-family: "Pacifico";
+}
+.nav .nav-right {
+  font-family: "Maven Pro";
+  width: 15%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.nav .nav-right .log-btn {
+  border: 1px solid #82b5b5;
+  background: black;
+  color: #d4fff8;
+  padding: 5px 14px;
+  border-radius: 30px;
+  font-size: 15px;
+  font-weight: bold;
+  box-shadow: 5px 6px 84px 0px;
+}
+.nav .nav-right .log-btn:hover {
+  background-color: #88bdbc;
+  color: black;
+}
+
+.login-btn {
+  background: black;
+  color: #d4fff8;
+  padding: 5px 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: bold;
+  box-shadow: 5px 6px 84px 0px;
+}
+
+.login-btn:hover {
+  background-color: #88bdbc;
+  color: black;
+}
+
+.login-section {
+  margin-top: 2%;
+}
+
+.login-form {
+  font-family: "Comfortaa";
+  border: 5px solid black;
+  top: 20%;
+  left: 15%;
+  right: 15%;
+  border-radius: 9% 0%;
+  padding: 40px;
+}
+.login-form .login-form-header h3 {
+  font-weight: bold;
+  font-size: 40px;
+}
+.login-form .login-form-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.login-form .login-form-main .btns {
+  display: flex;
+  flex-direction: row;
+}
+.login-form .login-form-main div {
+  display: flex;
+  flex-direction: column;
+  margin: 7px 0px;
+}
+.login-form .login-form-main div label {
+  font-weight: bold;
+  font-size: 20px;
+}
+.login-form .login-form-main div input {
+  width: 280px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px;
+  padding: 7px 10px;
+  border-radius: 7px;
+}
+
+.line {
+  height: 1px;
+  background: black;
+  width: auto;
+  margin: 15px 0px;
+}
+
+.modal-body .mb-2 {
+  margin: 20px 0px;
+  padding: 5px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.modal-body .modal-body-heading {
+  font: bold;
+}
+.modal-body .mb-2:hover {
+  background-color: rgba(0, 0, 0, 0.2117647059);
+}
+
+.signup-form {
+  font-family: "Comfortaa";
+  border: 5px solid black;
+  top: 20%;
+  left: 15%;
+  right: 15%;
+  border-radius: 9% 0%;
+  padding: 25px;
+}
+.signup-form .signup-form-header h3 {
+  font-weight: bold;
+  font-size: 40px;
+}
+.signup-form .signup-form-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.signup-form .signup-form-main .btns {
+  display: flex;
+  flex-direction: row;
+}
+.signup-form .signup-form-main div {
+  display: flex;
+  flex-direction: column;
+  margin: 7px 0px;
+}
+.signup-form .signup-form-main div select {
+  width: 280px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px;
+  padding: 7px 10px;
+  border-radius: 7px;
+}
+.signup-form .signup-form-main div label {
+  font-weight: bold;
+  font-size: 20px;
+}
+.signup-form .signup-form-main div input {
+  width: 280px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px;
+  padding: 7px 10px;
+  border-radius: 7px;
+}
+.signup-form .signup-form-main div textarea {
+  width: 280px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px;
+  padding: 7px 10px;
+  border-radius: 7px;
+}
+
+.section {
+  margin-top: 20px;
+}
+
+.home-header {
+  margin: 20px 5px;
+}
+
+.totals {
+  background-color: rgba(128, 128, 128, 0.112);
+  border-radius: 10px;
+  justify-content: space-around;
+}
+.totals .total-admins {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.totals .total-managers {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.totals .total-users {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.totals .circle-total {
+  border: 2px solid;
+  padding: 0px 40px;
+  margin: 12px;
+  line-height: 100px;
+  width: 100px;
+  height: 100px;
+  border-radius: 79px;
+}
+
+.lists {
+  font-family: "Quicksand";
+  margin: 15px 5px;
+}
+.lists .list-1 {
+  border: 1px solid;
+  border-radius: 10px;
+  width: 70%;
+  padding: 20px;
+  background: linear-gradient(to left, #325861, #88bdbc);
+}
+.lists .list-1 .card {
+  background-color: transparent;
+}
+.lists .list-2 {
+  padding: 20px;
+  width: 30%;
+  border: 1px solid;
+  border-radius: 10px;
+  background: linear-gradient(to right, #325861, #88bdbc);
+}
+.lists .list-2 li {
+  background-color: transparent;
+}
+
+.breadcrumb {
+  margin-top: 61px;
+  background: black;
+}
+
+.requests-section-header {
+  font-family: "Play";
+}
+
+.table-btn {
+  background-color: black;
+  padding: 0px 17px;
+  border-radius: 25px;
+}
+.table-btn i {
+  color: white;
+}
+
+.invalid {
+  border: 1px solid red !important;
+  box-shadow: 0px 0px 7px 0px;
+  color: red;
+}
+
+.alert-div {
+  width: 100%;
+  margin-top: 100px;
+  height: 60px;
+}/*# sourceMappingURL=main.css.map */

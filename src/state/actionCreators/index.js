@@ -21,27 +21,40 @@ export const Login = (data) => {
   return async (dispatch) => {
     let administrator;
     let detail ;
+    const requestBody ={
+      query:`
+      query{
+        Login(email:"${data.email}" , password:"${data.password}"){
+          token
+          _id
+          administrator
+        }
+      }
+      `
+    }
     try {
       let response = await fetch(
-        "http://localhost:5000/user-control/api/auth/login",
+        "http://localhost:5000/graphql",
         {
           headers: { "Content-type": "application/json" },
           method: "POST",
-          body: JSON.stringify(data),
+          body: JSON.stringify(requestBody),
         }
       );
       let json = await response.json();
        detail = json.detail;
-      if (json.administrator) {
-        localStorage.setItem("admin", json.administrator);
-        localStorage.setItem("authToken", json.authToken);
-        administrator = json.administrator;
+      if (!json.errors) {
+        localStorage.setItem("admin", json.data.Login.administrator);
+        localStorage.setItem("authToken", json.data.Login.token);
+        localStorage.setItem("administrator", json.data.Login._id);
+        administrator = json.data.Login.administrator;
         dispatch({
           type: LOGIN,
           payload: { administrator, detail },
         });
       } else {
         administrator = null;
+        localStorage.removeItem("administrator");
         localStorage.removeItem("admin");
         localStorage.removeItem("authToken");
         dispatch({
@@ -50,7 +63,6 @@ export const Login = (data) => {
         });
       }
     } catch (error) {
-     
       console.error(error);
     }
   };
@@ -59,9 +71,8 @@ export const Login = (data) => {
 export const managerSignup = (data) => {
   return async (dispatch) => {
     try {
-      let success;
       let response = await fetch(
-        "http://localhost:5000/user-control/api/request/signup/manager",
+        "http://localhost:5000/graphql",
         {
           headers: { "Content-type": "application/json" },
           method: "POST",
@@ -70,7 +81,7 @@ export const managerSignup = (data) => {
       );
       let json = await response.json();
       console.log(json);
-      if(!json.error){
+      if(!json.errors){
         dispatch({
           type: MANAGER_SIGNUP,
           payload: true,
@@ -89,11 +100,12 @@ export const managerSignup = (data) => {
 };
 
 export const userSignup = (data) => {
+
   return async (dispatch) => {
     try {
       let administrator;
       let response = await fetch(
-        "http://localhost:5000/user-control/api/request/signup/user",
+        "http://localhost:5000/graphql",
         {
           headers: { "Content-type": "application/json" },
           method: "POST",
@@ -101,8 +113,8 @@ export const userSignup = (data) => {
         }
       );
       const json = await response.json();
-      console.log(!json.error)
-      if(!json.error){
+      
+      if(!json.errors){
         dispatch({
           type: USER_SIGNUP,
           payload: administrator,
@@ -156,17 +168,31 @@ export const editDetailUser = (id, data) => {
 
 export const editDetailManager = (id, data) => {
   return async (dispatch) => {
+    let updatedManager = {
+      query : `
+      mutation{
+        editManager(editManagerInput:{_id:"${id}" , name:"${data.name}" , address:"${data.address}" , email :"${data.email}" , mobile:"${data.mobile}"}){
+          name
+          email
+          mobile
+          address
+          _id
+        }
+      }
+      `
+    };
+   
     try {
       const token = localStorage.getItem("authToken");
-      let response = await fetch(
-        `http://localhost:5000/user-control/api/update/manager/${id}`,
+      const response = await fetch( 
+        `http://localhost:5000/graphql`,
         {
+          method: "POST",
           headers: {
             "Content-type": "application/json",
-            authToken: `${token}`,
+            'Authorization': `${token}`,
           },
-          method: "PUT",
-          body: JSON.stringify(data),
+          body: JSON.stringify(updatedManager),
         }
       );
       const detail = await response.json();
@@ -190,37 +216,77 @@ export const editDetailManager = (id, data) => {
 
 export const fetchRequests = (administrator) => {
   if (administrator === "admin") {
+    const requestBody = {
+      query:`
+      query{
+        allRequestedManagers{
+          name
+          mobile
+          _id
+          address
+          email
+          role
+          password
+        }
+      }
+      `
+    }
     return async (dispatch) => {
       let token = localStorage.getItem("authToken");
       const response = await fetch(
-        "http://localhost:5000/user-control/api/fetch/requestedmanagers",
+        "http://localhost:5000/graphql",
         {
-          method: "GET",
-          headers: { authToken: `${token}` },
+          method: "POST",
+          headers: { 'Content-type': `application/json` },
+          body:JSON.stringify(requestBody)
         }
       );
-      const data = await response.json();
-      const length = data.length;
+      const json = await response.json();
+      const data =json.data.allRequestedManagers;
+      const length = json.data.allRequestedManagers.length;
       dispatch({
         type: FETCH_MANAGER_REQUESTS,
         payload: { data, length },
       });
     };
   } else if (administrator === "manager") {
+    const requestBody = {
+      query:`
+      query{
+        allRequestedUsers{
+          name
+          mobile
+          _id
+          address
+          email
+          role
+          password
+          manager{
+            _id
+          }
+        }
+      }
+      `
+    }
+    const managerId = localStorage.getItem('administrator');
+
     return async (dispatch) => {
       let token = localStorage.getItem("authToken");
       const response = await fetch(
-        "http://localhost:5000/user-control/api/fetch/requestedusers",
+        "http://localhost:5000/graphql",
         {
-          method: "GET",
-          headers: { authToken: `${token}` },
+          method: "POST",
+          headers: { 'Content-type' : 'application/json'},
+          body : JSON.stringify(requestBody)
         }
       );
-      const data = await response.json();
-      const length = data.length;
+      const json = await response.json();
+      const data = json.data.allRequestedUsers;
+      const filteredData =  Array.from(data).filter((element)=>element.manager._id === managerId)
+      const length = filteredData.length;
       dispatch({
         type: FETCH_USER_REQUESTS,
-        payload: { data, length },
+        payload: { filteredData, length },
       });
     };
   }

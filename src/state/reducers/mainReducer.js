@@ -12,13 +12,6 @@ import {
   USER_SIGNUP_FAILED,
 } from "../type";
 
-let initial = {
-  administrator: null,
-  detail: null,
-  process: 0,
-  success: false,
-};
-
 const showAlert = (type, message) => {
   let alertClass = document.querySelector(".alert-div");
   alertClass.innerHTML = `
@@ -30,6 +23,15 @@ const showAlert = (type, message) => {
     alertClass.innerHTML = "";
   }, 2000);
 };
+
+let initial = {
+  administrator: null,
+  detail: null,
+  process: 0,
+  success: false,
+};
+
+
 
 const mainReducer = (state = initial, action) => {
   switch (action.type) {
@@ -73,7 +75,7 @@ const mainReducer = (state = initial, action) => {
       };
     case USER_SIGNUP_FAILED:
       const { json } = action.payload;
-      if (json.error.code) {
+      if (json.errors) {
         showAlert("danger", "Email already exists");
       } else {
         showAlert(
@@ -97,7 +99,8 @@ const mainReducer = (state = initial, action) => {
     case SHOW_ALERT:
       const {type , message} = action.payload
       showAlert(type , message)
-      return {...state};
+      return {...state  } 
+     
     default:
       return state;
   }

@@ -7,8 +7,11 @@ import Home from "./components/Home";
 import Requests from "./components/Requests";
 import Alert from "./components/Alert";
 import { useEffect } from "react";
+import Breadcrumb from "./components/Breadcrumb";
+import { useSelector } from "react-redux";
 
 function App() {
+  const {administrator} = useSelector((state)=>state.main)
   // useEffect(() => {
   //   const alert = (type , message) => {
   //     let alertClass = document.querySelector(".alert-div");
@@ -37,6 +40,7 @@ function App() {
     <Router>
       <div>
         <Navbar />
+       
         <Alert />
         <Routes>
           <Route path="/" element={<Login />}>

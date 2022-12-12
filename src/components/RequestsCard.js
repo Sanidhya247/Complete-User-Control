@@ -4,19 +4,17 @@ import { bindActionCreators } from "redux";
 import { actionCreators } from "../state";
 
 const RequestsCard = (props) => {
-  const { data, deleteRequest, addRequest } = props;
+  const { data, deleteRequest, addRequest , index } = props;
   const dispatch = useDispatch();
   const {showAlert} = bindActionCreators(actionCreators , dispatch)
-  let role = data.role;
-  let name = data[`requested_${role}_Name`];
-  let email = data[`requested_${role}_Email`];
-
+  
+  let {name , email , mobile} = data
   return (
     <tr>
-      <th scope="row">1</th>
+      <th scope="row">{index+1}</th>
       <td>{name}</td>
       <td>{email}</td>
-      <td>{data.mobile_No}</td>
+      <td>{mobile}</td>
       <td>
         <button className="table-btn" onClick={() => addRequest(data)}>
           <i className="fa fa-duotone fa-check-double"></i>

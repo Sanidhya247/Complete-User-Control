@@ -1,3 +1,4 @@
+import { type } from "@testing-library/user-event/dist/type";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -10,15 +11,17 @@ import SmallCards from "./SmallCards";
 
 const Home = () => {
   const dispatch = useDispatch();
-  const { editDetailUser, editDetailManager , showAlert } = bindActionCreators(
+  const { editDetailUser, editDetailManager, showAlert } = bindActionCreators(
     actionCreators,
     dispatch
   );
   let { administrator, detail } = useSelector((state) => state.main);
   const ref = useRef();
   let navigate = useNavigate();
-  let token = localStorage.getItem('authToken')
-  if (!administrator ) { navigate("/"); }
+  let token = localStorage.getItem("authToken");
+  if (!administrator) {
+    navigate("/");
+  }
 
   useEffect(() => {
     if (administrator === "manager") {
@@ -44,18 +47,61 @@ const Home = () => {
   ////////////////////////////////////////////////////////////////
 
   const CountManagers = async () => {
-    let token = localStorage.getItem("authToken");
-    if (administrator !== "manager") {
-      const response = await fetch(
-        "http://localhost:5000/user-control/api/fetch/allmanagers",
-        {
-          method: "GET",
-          headers: { authToken: `${token}` },
+    if (administrator === "admin") {
+      const requestBody = {
+        query: `query{
+          managers{
+            _id
+            name
+            email
+            address
+            mobile
+            _id
+            role
+  
+          }
         }
-      );
+        `,
+      };
+
+      let token = localStorage.getItem("authToken");
+      if (administrator !== "manager") {
+        const response = await fetch("http://localhost:5000/graphql", {
+          method: "POST",
+          body: JSON.stringify(requestBody),
+          headers: { "Content-type": "application/json" },
+        });
+        const json = await response.json();
+        setTotalManagers(json.data.managers.length);
+        setManagers(json.data.managers);
+      }
+    } else if (administrator === "user") {
+      const requestBody = {
+        query: `query{
+          users{
+            _id
+           manager{
+            name
+            mobile
+            email
+           }
+  
+          }
+        }
+        `,
+      };
+      const response = await fetch("http://localhost:5000/graphql", {
+        method: "POST",
+        body: JSON.stringify(requestBody),
+        headers: { "Content-type": "application/json" },
+      });
       const json = await response.json();
-      setTotalManagers(json.length);
-      setManagers(json);
+      let id = localStorage.getItem("administrator");
+      const { data } = json;
+      const { users } = data;
+      let manager = Array.from(users)
+      .filter((element) => (element._id===id)).map((element)=>element.manager)
+      setManagers(manager[0]);
     } else {
       return;
     }
@@ -64,42 +110,79 @@ const Home = () => {
   ////////////////////////////////////////////////////////////////
 
   const CountUsers = async () => {
+    let id = localStorage.getItem("administrator");
+    let requestBody;
+    if (administrator === "manager") {
+      requestBody = {
+        query: `query{
+          myusers(id:"${id}"){
+            name
+            email
+            address
+            mobile
+            _id
+            role
+          }
+        }
+        `,
+      };
+    } else {
+      requestBody = {
+        query: `query{
+          users{
+            name
+            email 
+            mobile
+            address
+          }
+        }
+        `,
+      };
+    }
+
     let token = localStorage.getItem("authToken");
-    const response = await fetch(
-      "http://localhost:5000/user-control/api/fetch/allusers",
-      {
-        method: "GET",
-        headers: { authToken: `${token}` },
-      }
-    );
+    const response = await fetch("http://localhost:5000/graphql", {
+      method: "POST",
+      headers: { "Content-type": `application/json` },
+      body: JSON.stringify(requestBody),
+    });
     const json = await response.json();
-    setTotalUsers(json.length);
-    setUsers(
-      json.filter((element) => {
-        return element._id !== detail._id;
-      })
-    );
+
+    {
+      administrator === "manager"
+        ? setTotalUsers(json.data.myusers.length)
+        : setTotalUsers(json.data.users.length);
+    }
+    {
+      administrator === "manager"
+        ? setUsers(json.data.myusers)
+        : setUsers(json.data.users);
+    }
   };
 
   ////////////////////////////////////////////////////////////////
-
-  useEffect(() => {
-    const CountAdmins = async () => {
-      const response = await fetch(
-        "http://localhost:5000/user-control/api/fetch/alladmins",
-        {
-          method: "GET",
+  const CountAdmins = async () => {
+    const requestBody = {
+      query: `query{
+        admins{
+          name
         }
-      );
-      const json = await response.json();
-      setTotalAdmins(json.length);
+      }
+      `,
     };
+    const response = await fetch("http://localhost:5000/graphql", {
+      method: "POST",
+      headers: { "Content-type": `application/json` },
+      body: JSON.stringify(requestBody),
+    });
+    const json = await response.json();
+    setTotalAdmins(json.data.admins.length);
+  };
+  useEffect(() => {
     CountAdmins();
-
     if (administrator === "admin" || administrator === "user") {
       CountManagers();
     }
-
     CountUsers();
     //eslint-disable-next-line
   }, []);
@@ -121,67 +204,63 @@ const Home = () => {
     let address = document.getElementById("edit-address").value;
     let mobile = document.getElementById("edit-mobile").value;
 
-    let updatedUser = {
-      user_Name: name,
-      user_Email: email,
-      address: address,
-      mobile_No: mobile,
-    };
-    let updatedManager = {
-      manager_Name: name,
-      manager_Email: email,
-      address: address,
-      mobile_No: mobile,
-    };
-    if (id === detail._id) {
-      ref.current.click();
-      if (detail.role === "user") {
-        return editDetailUser(id, updatedUser);
-      } else if (detail.role === "manager") {
-        return editDetailManager(id, updatedManager);
-      }
-    }
-    if (administrator === "admin") {
-      const response = await fetch(
-        `http://localhost:5000/user-control/api/update/manager/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-type": "application/json",
-            authToken: `${token}`,
-          },
-          body: JSON.stringify(updatedManager),
+    ref.current.click();
+    if (data.role === "manager") {
+      let updatedManager = {
+        query: `
+        mutation{
+          editManager(editManagerInput:{_id:"${id}" , name:"${name}" , address:"${address}" , email :"${email}" , mobile:"${mobile}"}){
+            name
+            email
+            mobile
+            address
+            _id
+          }
         }
-      );
+        `,
+      };
+      console.log(data);
+      const response = await fetch(`http://localhost:5000/graphql`, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `${token}`,
+        },
+        body: JSON.stringify(updatedManager),
+      });
+      const json = await response.json();
+      CountManagers();
+      ref.current.click();
+      showAlert("success", "edited successfully");
+    } else if (data.role === "user") {
+      let updatedUser = {
+        query: `
+        mutation{
+          editUser(editUserInput:{_id:"${id}" , name:"${name}" , address:"${address}" , email :"${email}" , mobile:"${mobile}"}){
+            name
+            email
+            mobile
+            address
+            _id
+          }
+        }
+        `,
+      };
+      const response = await fetch(`http://localhost:5000/graphql`, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `${token}`,
+        },
+        body: JSON.stringify(updatedUser),
+      });
       const json = await response.json();
       ref.current.click();
-      if (json._id) {
-        showAlert('success' , 'deleted successfully')
-        CountManagers();
-      }else{
-        showAlert('danger' , 'There might be some error ! Try again later')
-      }
-    } else if (administrator === "manager") {
-      const response = await fetch(
-        `http://localhost:5000/user-control/api/update/user/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-type": "application/json",
-            authToken: `${token}`,
-          },
-          body: JSON.stringify(updatedUser),
-        }
-      );
-      const json = await response.json();
-      ref.current.click();
-      if (json._id) {
-        showAlert('success' , 'edited successfully')
+      if (!json.errors) {
+        showAlert("success", "edited successfully");
         CountUsers();
-      }
-      else{
-        showAlert('danger' , 'There might be some error ! Try again later')
-
+      } else {
+        showAlert("danger", "There might be some error ! Try again later");
       }
     }
   };
@@ -189,43 +268,68 @@ const Home = () => {
   ////////////////////////////////////////////////////////////
   const Del = async (id) => {
     const token = localStorage.getItem("authToken");
-
+    const deleteManager = {
+      query: `
+      query{
+      deleteManager(id:"${id}"){
+      name
+      address
+    }
+  }
+  `,
+    };
     if (administrator === "admin") {
-      const response = await fetch(
-        `http://localhost:5000/user-control/api/delete/manager/${id}`,
-        {
-          method: "DELETE",
-          headers: { authToken: `${token}` },
-        }
-      );
+      const response = await fetch(`http://localhost:5000/graphql`, {
+        method: "POST",
+        headers: {
+          Authorization: `${token}`,
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(deleteManager),
+      });
       const json = await response.json();
-      if (json._id) {
-        showAlert('success' , 'Deleted successfully')
+      console.log(json);
+      if (!json.errors) {
+        showAlert("success", "Deleted successfully");
         CountManagers();
         CountUsers();
-      }else{
-        showAlert('danger' , 'There might be some error ! Please try again later')
+      } else {
+        showAlert(
+          "danger",
+          "There might be some error ! Please try again later"
+        );
       }
     } else if (administrator === "manager") {
-      const response = await fetch(
-        `http://localhost:5000/user-control/api/delete/user/${id}`,
-        {
-          method: "DELETE",
-          headers: { authToken: `${token}` },
-        }
-      );
+      const deleteUser = {
+        query: `query{
+                deleteUser(id:"${id}"){
+                name
+              }
+            }`,
+      };
+      const response = await fetch(`http://localhost:5000/graphql`, {
+        method: "POST",
+        headers: {
+          Authorization: `${token}`,
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(deleteUser),
+      });
       const json = await response.json();
-      if (json._id) {
-        showAlert('sucess' , 'Deleted successfully')
+      if (!json.errors) {
+        showAlert("success", "Deleted successfully");
         CountUsers();
-      }else{
-        showAlert('danger' , 'There might be some error ! Please try again later')
+      } else {
+        showAlert(
+          "danger",
+          "There might be some error ! Please try again later"
+        );
       }
     }
   };
   return (
     <>
-      <Breadcrumb name={administrator} />
+      <Breadcrumb />
       <button
         ref={ref}
         type="button"
@@ -331,7 +435,7 @@ const Home = () => {
             )}
 
             <div className="line"></div>
-            {administrator !== "admin" && administrator && (
+            {/* {administrator !== "admin" && administrator && (
               <div class="card">
                 <div class="card-header">My Profile</div>
 
@@ -349,7 +453,7 @@ const Home = () => {
                     <p class="card-text">Address :{detail.address}</p>
                   ) : null}
                   {/* eslint-disable-next-line */}
-                  <a
+            {/* <a
                     class="btn btn-primary"
                     onClick={() => {
                       document.getElementById("edit-name").value =
@@ -371,7 +475,7 @@ const Home = () => {
                   </a>
                 </div>
               </div>
-            )}
+            {/* )} */}
             <div className="line"></div>
             <h1>
               Lists of the {administrator === "admin" ? "managers" : "users"}

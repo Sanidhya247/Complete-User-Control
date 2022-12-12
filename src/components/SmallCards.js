@@ -1,21 +1,32 @@
 import React from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 const SmallCards = (props) => {
   const { data } = props;
   const { administrator } = useSelector((state) => state.main);
+  let newData;
+  // useEffect(()=>{
+  //   if (administrator === "user") {
+  //     newData = data.reduce((name) => name.manager);
+  //     console.log(newData.manager);
+  //   }
+  // },[])
+  console.log(data)
+  
+
   return (
     <li className="list-group-item">
-      {administrator === "user" ? (
+      {administrator === "user"? (
         <p>
-          <strong> Name :</strong> {data.manager_Name}
+          <strong> Name :</strong> {data.name}
           <br />
           <strong> Email :</strong>
-          {data.manager_Email} <br /> <strong> Phone :</strong> {data.mobile_No}{" "}
+          {data.email} <br /> <strong> Phone :</strong>{" "}
+          {data.mobile}{" "}
         </p>
-      ) : (
-        `${data.user_Name}`
-      )}
+      ): data.name}
+      
     </li>
   );
 };

@@ -6,9 +6,9 @@ const LargeCard = (props) => {
   const { data, openEditView, Del } = props;
   let name, email, mobile, address;
   let role = data.role;
-  name = data[`${role}_Name`];
-  email = data[`${role}_Email`];
-  mobile = data.mobile_No;
+  name = data.name;
+  email = data.email
+  mobile = data.mobile;
   address = data.address;
 
   // if (administrator === "admin") {

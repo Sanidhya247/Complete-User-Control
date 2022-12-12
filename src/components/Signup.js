@@ -13,29 +13,34 @@ const Signup = (props) => {
     actionCreators,
     dispatch
   );
-  const {success} = useSelector(state=>state.main)
+  const { success } = useSelector((state) => state.main);
 
+  const fetchedManagers = {
+    query:`
+    query{
+      managers{
+        name
+        _id
+      }
+    }`
+  }
   useEffect(() => {
     const fetchManagers = async () => {
-      const response = await fetch(
-        "http://localhost:5000/user-control/api/fetch/allmanagers",
-        {
-          method: "GET",
-          headers: {
-            authToken:
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzODA0MDNiNmZkMmU2NGU5NmZiNDkxYiIsImlhdCI6MTY2OTM0OTQzNX0.KO8gOlBfTAp2HjudARwPYikfIqtQa6MoN5WjOZmvwE0",
-          },
-        }
-      );
+      const response = await fetch("http://localhost:5000/graphql", {
+        method: "POST",
+        headers: {"Content-type": "application/json"},
+        body : JSON.stringify(fetchedManagers)
+      });
       const json = await response.json();
-      setManagersList(json);
+      console.log(json.data.managers)
+      setManagersList(json.data.managers);
     };
     fetchManagers();
   }, []);
 
   const navigate = useNavigate();
-  console.log(success)
-  
+  console.log(success);
+
   const onChange = (e) => {
     let newname = e.target.name;
     let value = e.target.value;
@@ -122,23 +127,30 @@ const Signup = (props) => {
     if (validForm) {
       if (name === "Manager") {
         const newManager = {
-          requested_manager_Name: nname,
-          requested_manager_Email: email,
-          password: password,
-          mobile_No: mobile,
-          address: address,
+          query: `mutation{
+            requestManager(signupManagerInput:{name:"${nname}" , email:"${email}", mobile:"${mobile}" , address:"${address}" , password :"${password}"}){
+              name 
+              email
+              address
+              mobile
+            }
+          }`,
         };
+
         managerSignup(newManager);
       } else if (name === "User") {
         let manager = document.getElementById("choose-manager").value;
-        const newUser = {
-          requested_user_Name: nname,
-          manager: manager,
-          requested_user_Email: email,
-          password: password,
-          mobile_No: mobile,
-          address: address,
-        };
+        const newUser ={
+          query :`mutation{
+            requestUser(signupUserInput:{name:"${nname}" , email:"${email}" , password:"${password}" , address :"${address}" , mobile:"${mobile}" , manager :"${manager}"}){
+              name
+              email
+              _id
+              address
+              mobile
+            }
+          }`
+        }
         userSignup(newUser);
       }
     } else {
@@ -191,7 +203,7 @@ const Signup = (props) => {
                         {managersList.map((element) => {
                           return (
                             <option value={element._id}>
-                              {element.manager_Name}
+                              {element.name}
                             </option>
                           );
                         })}
